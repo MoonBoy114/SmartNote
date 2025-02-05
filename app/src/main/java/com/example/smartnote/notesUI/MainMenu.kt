@@ -42,7 +42,7 @@ import com.example.smartnote.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainMenu(onAddNoteClick: () -> Unit) { // Передаём действие для добавления заметки
+fun MainMenu(onAddNoteClick: () -> Unit) {
     var isDarkMode by remember { mutableStateOf(false) }
     var currentGroup by remember { mutableStateOf("Закреплено") }
     var searchQuery by remember { mutableStateOf("") }
@@ -115,7 +115,7 @@ fun MainMenu(onAddNoteClick: () -> Unit) { // Передаём действие 
                     TextButton(
                         onClick = { currentGroup = group },
                         colors = ButtonDefaults.textButtonColors(
-                            contentColor = if (currentGroup == group) Color(0xFF6200EE) else textColor
+                            contentColor = if (currentGroup == group) Color(0xFF000000) else textColor
                         )
                     ) {
                         Text(group)
@@ -136,7 +136,7 @@ fun MainMenu(onAddNoteClick: () -> Unit) { // Передаём действие 
                     color = textColor
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = onAddNoteClick) { // Используем переданный колбэк
+                Button(onClick = onAddNoteClick) {
                     Text("Добавить заметку", color = Color.White)
                 }
             }
@@ -147,6 +147,6 @@ fun MainMenu(onAddNoteClick: () -> Unit) { // Передаём действие 
 @Preview
 @Composable
 fun PreviewMainMenu() {
-    MainMenu(onAddNoteClick = {}) // Предпросмотр без логики
+    MainMenu(onAddNoteClick = {})
 }
 

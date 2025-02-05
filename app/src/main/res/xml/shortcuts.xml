@@ -11,7 +11,7 @@
 
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetClass="com.example.smartnote.CreateNoteActivity"
+            android:targetClass="com.example.smartnote.notesUI.CreateNoteActivity"
             android:targetPackage="com.example.smartnote" />
 
         <categories android:name="android.shortcut.conversation" />

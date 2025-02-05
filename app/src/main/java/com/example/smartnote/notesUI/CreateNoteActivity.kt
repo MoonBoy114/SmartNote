@@ -1,4 +1,4 @@
-package com.example.smartnote
+package com.example.smartnote.notesUI
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -35,7 +35,7 @@ fun CreateNoteScreen(onBack: () -> Unit) {
                 placeholder = { Text("Введите заметку...") }
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { /* Сохранить заметку (добавить логику) */ }) {
+            Button(onClick = {  }) {
                 Text("Сохранить")
             }
             Spacer(modifier = Modifier.height(8.dp))
