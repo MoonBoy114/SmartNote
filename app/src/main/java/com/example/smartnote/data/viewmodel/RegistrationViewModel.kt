@@ -10,7 +10,7 @@ class RegistrationViewModel(private val userRepository: UserRepository) : ViewMo
     fun registerUser(username: String,  email: String,password: String) {
         viewModelScope.launch {
             val Password = password
-            val user = User(username = username, email = email, password = password)
+            val user = User(username = username, email = email, password = Password)
             userRepository.registerUser(user)
         }
     }
