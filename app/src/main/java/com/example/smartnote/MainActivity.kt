@@ -8,23 +8,27 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.Crossfade
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnote.data.user.UserRepository
+import com.example.smartnote.data.viewmodel.LoginViewModel
 import com.example.smartnote.notesUI.CreateNoteActivity
 import com.example.smartnote.notesUI.MainMenu
+import com.example.smartnote.notesUI.ProfileScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val isLog = remember { mutableStateOf(false) }
+            val isLog = remember { mutableStateOf("") }
             val isRegistering = remember { mutableStateOf(false) }
-            val errorMessage = remember { mutableStateOf<String?>(null) }
 
             val db = AppDatabase.getInstance(this)
             val userDao = db.userDao()
@@ -32,23 +36,26 @@ class MainActivity : ComponentActivity() {
 
             val navController: NavHostController = rememberNavController()
 
+            val username = remember { mutableStateOf("") }
+
             NavHost(navController = navController, startDestination = "crossfade") {
                 composable("crossfade") {
                     Crossfade(
                         targetState = when {
-                            isLog.value -> "MainMenu"
+                            isLog.value.isNotEmpty() -> "main/${username.value}" // Проверяем, не пустой ли username
                             isRegistering.value -> "Registering"
                             else -> "Login"
                         }
                     ) { screen ->
                         when (screen) {
-                            "MainMenu" -> MainMenu(onAddNoteClick = { openCreateNoteActivity() })
                             "Login" -> LoginScreenAndroid(
-                                onLoginSuccess = { isLog.value = true },
+                                onLoginSuccess = { user ->
+                                    username.value = user  // Сохраняем username после входа
+                                    navController.navigate("main/${user}")
+                                },
                                 onRegisterClick = { isRegistering.value = true },
                                 userRepository = userRepository
                             )
-
                             "Registering" -> RegistrationScreen(
                                 onBackClick = { isRegistering.value = false },
                                 userRepository = userRepository
@@ -56,6 +63,24 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
+                composable("main/{username}") { backStackEntry ->
+                    val user = backStackEntry.arguments?.getString("username") ?: ""
+
+                    MainMenu(
+                        username = user,  // Передаём username в MainMenu
+                        onAddNoteClick = { openCreateNoteActivity() },
+                        onProfileClick = {
+                            navController.navigate("profile/$user")  // Переход в профиль
+                        },
+                        navController = navController
+                    )
+                }
+                // Добавляем маршрут для ProfileScreen
+                composable("profile/{username}") { backStackEntry ->
+                    val user = backStackEntry.arguments?.getString("username") ?: ""
+                    ProfileScreen(username = user, navController = navController)
+                }
+
             }
         }
         setupAppShortcuts()
